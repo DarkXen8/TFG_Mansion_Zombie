@@ -20,36 +20,41 @@ class MainActivity : ComponentActivity() {
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val loadingText = findViewById<TextView>(R.id.textView)
 
-        // Ocultamos la barra de progreso y el texto al inicio
+        // 🔹 Asegurar que la barra de progreso y el texto empiecen ocultos
+        progressBar.alpha = 0f
         progressBar.visibility = View.INVISIBLE
+        loadingText.alpha = 0f
         loadingText.visibility = View.INVISIBLE
 
         // Animación de la imagen
         val scaleX = ObjectAnimator.ofFloat(imageView, "scaleX", 2f, 1f).apply {
             duration = 1250
         }
-
         val scaleY = ObjectAnimator.ofFloat(imageView, "scaleY", 2f, 1f).apply {
             duration = 1250
         }
-
         scaleX.start()
         scaleY.start()
 
-        // Lanzamos la animación de la barra de progreso y texto después de que la imagen termine
+        // Esperamos que termine la animación de la imagen
         GlobalScope.launch {
-            delay(1250)  // Esperamos a que termine la animación de la imagen
+            delay(1250)
 
             withContext(Dispatchers.Main) {
                 progressBar.visibility = View.VISIBLE
                 loadingText.visibility = View.VISIBLE
+
+                // 🔹 Usamos ObjectAnimator para un mejor fade-in
+                progressBar.animate().alpha(1f).setDuration(1000).start()
+                loadingText.animate().alpha(1f).setDuration(1000).start()
             }
 
-            // Animamos el progreso y el texto
+            // Iniciar animaciones adicionales
             launch { animateProgress(progressBar) }
             launch { changeLoadingText(loadingText) }
         }
     }
+
 
     private suspend fun animateProgress(progressBar: ProgressBar) {
         val progressSteps = listOf(30, 50, 75, 100) // Niveles de progreso
@@ -65,32 +70,28 @@ class MainActivity : ComponentActivity() {
             delay(delays[i])
         }
 
-        // Después de que la barra de progreso llegue a 100%, hacemos invisibles el texto y la barra poco a poco
+        // Desvanecemos la barra de progreso y el texto
         withContext(Dispatchers.Main) {
-            // Animación de desvanecimiento directamente en Kotlin
             val fadeOutProgress = AlphaAnimation(1f, 0f).apply {
-                duration = 1000 // Duración de la animación de desvanecimiento
+                duration = 1000
+                fillAfter = true
             }
             val fadeOutText = AlphaAnimation(1f, 0f).apply {
-                duration = 1000 // Duración de la animación de desvanecimiento
+                duration = 1000
+                fillAfter = true
             }
 
-            // Aplicamos las animaciones de desvanecimiento a las vistas
             progressBar.startAnimation(fadeOutProgress)
             val loadingText = findViewById<TextView>(R.id.textView)
             loadingText.startAnimation(fadeOutText)
 
-            // Esperamos que las animaciones terminen
-            delay(1000)
+            delay(1000) // Esperamos que termine la animación
 
-            // Cambiar a la actividad Principal con animación
+            // Cambiar a la actividad Principal instantáneamente sin mostrar el fondo
             val intent = Intent(this@MainActivity, Principal::class.java)
             startActivity(intent)
-
-            // Animación de transición entre actividades
-            overridePendingTransition(R.anim.zoom_in, R.anim.zoom_out)
-
-            finish() // Finalizamos la actividad actual
+            overridePendingTransition(0, 0) // Eliminar animaciones de transición
+            finish() // Finalizamos la actividad actual inmediatamente
         }
     }
 

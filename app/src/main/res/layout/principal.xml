@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- Fondo -->
     <ImageView
         android:id="@+id/imageView4"
         android:layout_width="match_parent"
@@ -14,10 +15,73 @@
         android:src="@drawable/loading_screen"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/logo_img"
+        android:layout_width="334dp"
+        android:layout_height="304dp"
+        android:src="@drawable/game_logo"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+        app:layout_constraintEnd_toEndOf="@+id/imageView4"
+        app:layout_constraintStart_toStartOf="@+id/imageView4"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.135" />
+
+    <!-- Botón Play -->
+    <Button
+        android:id="@+id/play_btn"
+        android:layout_width="176dp"
+        android:layout_height="98dp"
+        android:text="PLAY"
+        android:textSize="35sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imageView4"
+        app:layout_constraintTop_toBottomOf="@+id/logo_img"
+        app:layout_constraintVertical_bias="0.389" />
+
+    <!-- Contenedor de dificultad en CardView -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/difficultyContainer"
+        android:layout_width="306dp"
+        android:layout_height="223dp"
+        android:visibility="gone"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintVertical_bias="0.672">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <Button
+                android:id="@+id/easyButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fácil" />
+
+            <Button
+                android:id="@+id/mediumButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Medio" />
+
+            <Button
+                android:id="@+id/hardButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Difícil" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
