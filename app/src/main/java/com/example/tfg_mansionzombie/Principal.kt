@@ -1,6 +1,7 @@
 package com.example.tfg_mansionzombie
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AlphaAnimation
@@ -25,6 +26,21 @@ class Principal : ComponentActivity() {
         }
         background.setOnClickListener{
             background(background)
+        }
+
+        // Click Listeners Dificultades
+        val facilbtn = findViewById<Button>(R.id.easyButton)
+        val mediobtn = findViewById<Button>(R.id.mediumButton)
+        val dificilbtn = findViewById<Button>(R.id.hardButton)
+
+        facilbtn.setOnClickListener{
+
+        }
+        mediobtn.setOnClickListener {
+
+        }
+        dificilbtn.setOnClickListener {
+
         }
     }
 
@@ -62,4 +78,10 @@ class Principal : ComponentActivity() {
         }
     }
 
+    private fun launchGame(difficulty: View){
+        val intent = Intent(this, PartidaActivity::class.java).apply {
+            // putExtra("DIFFICULTY_LEVEL", difficulty)
+        }
+        startActivity(intent)
+    }
 }

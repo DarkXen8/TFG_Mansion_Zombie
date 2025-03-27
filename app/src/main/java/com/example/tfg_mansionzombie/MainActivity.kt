@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.loading)
 
-        val imageView = findViewById<ImageView>(R.id.imageView4)
+        val imageView = findViewById<ImageView>(R.id.loading_background)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val loadingText = findViewById<TextView>(R.id.textView)
 
@@ -84,6 +84,15 @@ class MainActivity : ComponentActivity() {
             progressBar.startAnimation(fadeOutProgress)
             val loadingText = findViewById<TextView>(R.id.textView)
             loadingText.startAnimation(fadeOutText)
+
+            delay(1000) // Esperamos que termine la animación
+
+            val fadeOutBackground = AlphaAnimation(1f, 0f).apply {
+                duration = 1000
+                fillAfter = true
+            }
+            val background = findViewById<ImageView>(R.id.loading_background)
+            background.startAnimation(fadeOutBackground)
 
             delay(1000) // Esperamos que termine la animación
 
