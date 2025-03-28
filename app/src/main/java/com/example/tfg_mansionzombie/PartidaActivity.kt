@@ -17,6 +17,5 @@ class PartidaActivity : AppCompatActivity() {
             insets
         }
 
-
     }
 }
