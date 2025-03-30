@@ -23,7 +23,7 @@
         android:id="@+id/logo_img"
         android:layout_width="334dp"
         android:layout_height="304dp"
-        android:src="@drawable/game_logo"
+        android:src="@drawable/mansion_zombie_logo"
         app:layout_constraintBottom_toBottomOf="@+id/imageView4"
         app:layout_constraintEnd_toEndOf="@+id/imageView4"
         app:layout_constraintStart_toStartOf="@+id/imageView4"

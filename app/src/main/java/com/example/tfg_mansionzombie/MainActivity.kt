@@ -16,6 +16,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.loading)
 
+
+
         val imageView = findViewById<ImageView>(R.id.loading_background)
         val progressBar = findViewById<ProgressBar>(R.id.progressBar)
         val loadingText = findViewById<TextView>(R.id.textView)

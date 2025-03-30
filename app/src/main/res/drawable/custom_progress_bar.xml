@@ -2,6 +2,7 @@
     <!-- Fondo de la barra -->
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
+            <solid android:color="#AAAAAA"/> <!-- Gris claro -->
             <corners android:radius="8dp"/>
         </shape>
     </item>
