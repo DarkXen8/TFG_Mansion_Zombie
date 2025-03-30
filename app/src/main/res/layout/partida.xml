@@ -2,10 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PartidaActivity">
+    android:background="@color/black">
 
     <ImageView
         android:id="@+id/imageView4"
@@ -27,13 +27,31 @@
         android:text="ROOM"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textStyle="bold"
         android:textSize="25sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.063"
+        app:layout_constraintVertical_bias="0.04"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/DifficultySelected"
+        android:layout_width="136dp"
+        android:layout_height="34dp"
+        android:gravity="center"
+        android:text="Difficulty"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.007"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.04"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -41,43 +59,66 @@
         android:layout_width="148dp"
         android:layout_height="37dp"
         android:text="PlayerHP"
-        android:textAlignment="center"
+        android:textAlignment="textStart"
         android:textColor="@android:color/white"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.052"
+        app:layout_constraintHorizontal_bias="0.045"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.146"
+        app:layout_constraintVertical_bias="0.145"
         tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/playerHP"
+        android:layout_width="109dp"
+        android:layout_height="24dp"
+        android:elevation="1dp"
+        android:text="0/0"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="15dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/PlayerHP_Bar"
+        app:layout_constraintEnd_toEndOf="@+id/PlayerHP_Bar"
+        app:layout_constraintHorizontal_bias="0.485"
+        app:layout_constraintStart_toStartOf="@+id/PlayerHP_Bar"
+        app:layout_constraintTop_toTopOf="@+id/PlayerHP_Bar"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="HardcodedText" />
+
 
     <TextView
         android:id="@+id/EnemyHP"
         android:layout_width="155dp"
         android:layout_height="36dp"
         android:text="EnemyHP"
-        android:textAlignment="center"
+        android:textAlignment="textEnd"
         android:textColor="@android:color/white"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.939"
+        app:layout_constraintHorizontal_bias="0.937"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.214"
+        app:layout_constraintVertical_bias="0.221"
         tools:ignore="HardcodedText" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/EnemySprite"
         android:layout_width="243dp"
         android:layout_height="305dp"
+        android:contentDescription="TODO"
+        android:src="@drawable/game_logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.514"
+        tools:ignore="ContentDescription,HardcodedText"
         tools:srcCompat="@tools:sample/avatars" />
 
     <ProgressBar
@@ -85,46 +126,32 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="144dp"
         android:layout_height="29dp"
-        android:progressDrawable="@drawable/custom_progress_bar"
         android:max="100"
-        android:progressTint="@android:color/holo_green_dark"
         android:progress="100"
+        android:progressDrawable="@drawable/custom_progress_bar"
+        android:progressTint="@android:color/holo_green_dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.052"
+        app:layout_constraintHorizontal_bias="0.044"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView4"
-        app:layout_constraintVertical_bias="0.196"/>
-
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.196" />
 
     <ProgressBar
         android:id="@+id/EnemyHP_Bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="144dp"
         android:layout_height="29dp"
-        android:progressDrawable="@drawable/custom_progress_bar"
         android:max="100"
-        android:progressTint="@android:color/holo_red_dark"
         android:progress="100"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+        android:progressDrawable="@drawable/custom_progress_bar"
+        android:progressTint="@android:color/holo_red_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.94"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.263" />
-
-    <Button
-        android:id="@+id/attack_btn"
-        android:layout_width="137dp"
-        android:layout_height="65dp"
-        android:text="Atacar"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.237"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.819"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.27" />
 
     <Button
         android:id="@+id/heal_btn"
@@ -132,24 +159,24 @@
         android:layout_height="65dp"
         android:text="Curar"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/imageView4"
-        app:layout_constraintHorizontal_bias="0.766"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.781"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.819"
+        app:layout_constraintVertical_bias="0.843"
         tools:ignore="HardcodedText" />
 
     <Button
-        android:id="@+id/next_btn"
+        android:id="@+id/attack_btn"
         android:layout_width="137dp"
         android:layout_height="65dp"
-        android:text="Avanzar"
+        android:text="Atacar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.766"
+        app:layout_constraintHorizontal_bias="0.24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.932"
+        app:layout_constraintVertical_bias="0.843"
         tools:ignore="HardcodedText" />
 
     <Button
@@ -159,10 +186,23 @@
         android:text="Buscar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.237"
+        app:layout_constraintHorizontal_bias="0.24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.932"
+        app:layout_constraintVertical_bias="0.954"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/next_btn"
+        android:layout_width="137dp"
+        android:layout_height="65dp"
+        android:text="Avanzar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.781"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.954"
         tools:ignore="HardcodedText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

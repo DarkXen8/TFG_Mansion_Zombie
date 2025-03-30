@@ -1,21 +1,41 @@
 package com.example.tfg_mansionzombie
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.provider.CalendarContract.Colors
+import android.widget.TextView
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.compose.ui.res.colorResource
+import org.w3c.dom.Text
 
-class PartidaActivity : AppCompatActivity() {
+
+class PartidaActivity : ComponentActivity() {
+    @SuppressLint("SetTextI18n", "MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_partida)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        setContentView(R.layout.partida)
+
+        val difficulty = intent.getIntExtra("DIFFICULTY_LEVEL", 1)
+        val difficultyText = findViewById<TextView>(R.id.DifficultySelected)
+
+        if (difficulty == 1){
+            difficultyText.text = "Dificultad: Easy"
+            difficultyText.setTextColor(Color.GREEN)
+        }
+        if (difficulty == 2){
+            difficultyText.text = "Dificultad: Medium"
+            difficultyText.setTextColor(Color.YELLOW)
+        }
+        if (difficulty == 3){
+            difficultyText.text = "Dificultad: Hell"
+            difficultyText.setTextColor(Color.RED)
         }
 
+        var jugador = Jugador()
+        var jugadorHP = findViewById<TextView>(R.id.playerHP)
+
+        jugadorHP.text = jugador.vida.toString() + "/100"
     }
 }

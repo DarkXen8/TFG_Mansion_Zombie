@@ -34,13 +34,13 @@ class Principal : ComponentActivity() {
         val dificilbtn = findViewById<Button>(R.id.hardButton)
 
         facilbtn.setOnClickListener{
-
+            launchGame(1)
         }
         mediobtn.setOnClickListener {
-
+            launchGame(2)
         }
         dificilbtn.setOnClickListener {
-
+            launchGame(3)
         }
     }
 
@@ -78,9 +78,9 @@ class Principal : ComponentActivity() {
         }
     }
 
-    private fun launchGame(difficulty: View){
+    private fun launchGame(difficulty: Int){
         val intent = Intent(this, PartidaActivity::class.java).apply {
-            // putExtra("DIFFICULTY_LEVEL", difficulty)
+            putExtra("DIFFICULTY_LEVEL", difficulty)
         }
         startActivity(intent)
     }
