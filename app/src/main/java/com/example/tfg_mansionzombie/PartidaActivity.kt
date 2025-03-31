@@ -20,11 +20,15 @@ class PartidaActivity : ComponentActivity() {
     private lateinit var jugador: Jugador
 
     private var enemigoMaxHP: Int = 0
+    private var jugadorMaxHP: Int = 0
 
     private lateinit var initialBackground: ImageView
     private var prevRoom: Int = 1
+    private var maxRoom: Int = 0
+    private var actualRoom: Int = 0
 
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.partida)
@@ -37,24 +41,33 @@ class PartidaActivity : ComponentActivity() {
 
         val difficulty = intent.getIntExtra("DIFFICULTY_LEVEL", 1)
         val difficultyText = findViewById<TextView>(R.id.DifficultySelected)
+        val roomNumberText = findViewById<TextView>(R.id.RoomNumber)
+
 
         if (difficulty == 1){
             difficultyText.text = "Dificultad: Easy"
             difficultyText.setTextColor(Color.GREEN)
+            maxRoom = 5
         }
         if (difficulty == 2){
             difficultyText.text = "Dificultad: Medium"
             difficultyText.setTextColor(Color.YELLOW)
+            maxRoom = 10
         }
         if (difficulty == 3){
             difficultyText.text = "Dificultad: Hell"
             difficultyText.setTextColor(Color.RED)
+            maxRoom = 15
         }
 
-        jugador = Jugador()
-        var jugadorHP = findViewById<TextView>(R.id.playerHPInsideBar)
+        roomNumberText.text = actualRoom.toString() + "/" + maxRoom.toString()
 
-        jugadorHP.text = jugador.vida.toString() + "/100"
+        jugador = Jugador()
+        jugadorMaxHP = jugador.vida
+        var playerHP = findViewById<TextView>(R.id.playerHPInsideBar)
+        var playerHPBar = findViewById<ProgressBar>(R.id.PlayerHP_Bar)
+
+        playerHP.text = jugador.vida.toString() + "/" + jugadorMaxHP
 
         var enemigoMaxHP = 0
 
@@ -80,16 +93,16 @@ class PartidaActivity : ComponentActivity() {
 
         // LLAMADAS DE LOS BOTONES AL SER PULSADOS
         atacarBtn.setOnClickListener {
-            atacar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP)
+            atacar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, playerHP, playerHPBar)
         }
         curarBtn.setOnClickListener {
-            curar()
+            curar(curarBtn, playerHPBar, playerHP)
         }
         buscarBtn.setOnClickListener {
-            buscar()
+            buscar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP)
         }
         avanzarBtn.setOnClickListener {
-            avanzar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP)
+            avanzar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, roomNumberText)
         }
     }
 
@@ -102,7 +115,9 @@ class PartidaActivity : ComponentActivity() {
         curarBtn: Button,
         buscarBtn: Button,
         avanzarBtn: Button,
-        enemyHP: TextView
+        enemyHP: TextView,
+        playerHP: TextView,
+        playerHPBar: ProgressBar
     ) {
         jugador.atacar(enemigo)
 
@@ -112,21 +127,66 @@ class PartidaActivity : ComponentActivity() {
             enemyHPText.visibility = View.GONE
             enemyHP.visibility = View.GONE
             atacarBtn.isEnabled = false
-            curarBtn.isEnabled = true
-            buscarBtn.isEnabled = true
+            if (jugador.curaciones){
+                curarBtn.isEnabled = true
+            }
+            if (jugador.busquedas != 0){
+                buscarBtn.isEnabled = true
+            }
             avanzarBtn.isEnabled = true
         }else{
             enemyHP.text = enemigo.vida.toString() + "/" + enemigoMaxHP
             enemyHPBar.progress = enemigo.vida
+            enemigo.atacar(jugador)
+            playerHP.text = jugador.vida.toString() + "/" + jugadorMaxHP
+            playerHPBar.progress = jugador.vida
+            if (jugador.vida == 0){
+                atacarBtn.isEnabled = false
+                curarBtn.isEnabled = false
+                buscarBtn.isEnabled = false
+                avanzarBtn.isEnabled = false
+            }
         }
     }
 
-    fun curar(){
-
+    @SuppressLint("SetTextI18n")
+    fun curar(curarBtn: Button, playerHPBar: ProgressBar, playerHP: TextView) {
+        jugador.curarse()
+        curarBtn.isEnabled = false
+        playerHPBar.progress = jugador.vida
+        playerHP.text = jugador.vida.toString() + "/" + jugadorMaxHP
+        jugador.curaciones = false
     }
 
-    fun buscar(){
+    fun buscar(
+        enemySprite: ImageView,
+        enemyHPBar: ProgressBar,
+        enemyHPText: TextView,
+        atacarBtn: Button,
+        curarBtn: Button,
+        buscarBtn: Button,
+        avanzarBtn: Button,
+        enemyHP: TextView
+    ) {
+        val searchRandom = (1..4).random()
 
+        if (searchRandom == 1){
+            jugador.curaciones = true
+            curarBtn.isEnabled = true
+        }
+        if ( searchRandom == 2){
+            jugador.armas += 1
+        }
+        if (searchRandom == 3){
+            jugador.protecciones += 1
+        }
+        if (searchRandom == 4){
+            spawnZombie(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP)
+        }
+        jugador.busquedas -= 1
+        if (jugador.busquedas == 0){
+            buscarBtn.isEnabled = false
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -138,8 +198,30 @@ class PartidaActivity : ComponentActivity() {
         curarBtn: Button,
         buscarBtn: Button,
         avanzarBtn: Button,
-        enemyHP: TextView
+        enemyHP: TextView,
+        roomNumberText: TextView
     ) {
+        if (actualRoom != maxRoom){
+            spawnZombie(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP)
+            backgroundRandomizer()
+            jugador.busquedas = 3
+            actualRoom += 1
+            roomNumberText.text = actualRoom.toString() + "/" + maxRoom.toString()
+        }
+        // IMPLEMENTAR LA VENTANA DE VICTORIA
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun spawnZombie(
+        enemySprite: ImageView,
+        enemyHPBar: ProgressBar,
+        enemyHPText: TextView,
+        atacarBtn: Button,
+        curarBtn: Button,
+        buscarBtn: Button,
+        avanzarBtn: Button,
+        enemyHP: TextView
+    ){
         enemigo = Zombie()
 
         zombieRandomizer(enemySprite)
@@ -155,10 +237,11 @@ class PartidaActivity : ComponentActivity() {
         enemyHPBar.progress = enemigoMaxHP
 
         atacarBtn.isEnabled = true
-        curarBtn.isEnabled = true
+        if (jugador.curaciones){
+            curarBtn.isEnabled = true
+        }
         buscarBtn.isEnabled = false
         avanzarBtn.isEnabled = false
-        backgroundRandomizer()
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
