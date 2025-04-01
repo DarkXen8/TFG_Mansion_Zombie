@@ -2,6 +2,7 @@ package com.example.tfg_mansionzombie
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AlphaAnimation
@@ -18,7 +19,11 @@ class Principal : ComponentActivity() {
 
         val logo = findViewById<ImageView>(R.id.logo_img)
         val play = findViewById<Button>(R.id.play_btn)
+        val inputStream = assets.open("Backgrounds/play_btn_background.png")
+        val drawable = Drawable.createFromStream(inputStream, null)
+        play.background = drawable
         val background = findViewById<ImageView>(R.id.imageView4)
+
 
         fadeIn(logo, play)
         play.setOnClickListener{
@@ -66,6 +71,9 @@ class Principal : ComponentActivity() {
 
     private fun playBtn(play: View){
         val diffContainer = findViewById<CardView>(R.id.difficultyContainer)
+        val inputStream = assets.open("Backgrounds/diff_selector_background.png")
+        val drawable = Drawable.createFromStream(inputStream, null)
+        diffContainer.background = drawable
         fadeIn(diffContainer)
         diffContainer.visibility = View.VISIBLE
     }
