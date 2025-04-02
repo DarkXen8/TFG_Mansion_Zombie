@@ -70,10 +70,30 @@ class Principal : ComponentActivity() {
     }
 
     private fun playBtn(play: View){
+        // DIFF CONTAINER BACKGROUND
         val diffContainer = findViewById<CardView>(R.id.difficultyContainer)
-        val inputStream = assets.open("Backgrounds/diff_selector_background.png")
-        val drawable = Drawable.createFromStream(inputStream, null)
-        diffContainer.background = drawable
+        val diffContainerStream = assets.open("Backgrounds/diff_selector_background.png")
+        val diffContainerDrawable = Drawable.createFromStream(diffContainerStream, null)
+        diffContainer.background = diffContainerDrawable
+
+        // EASY BACKGROUND
+        val easyBtn = findViewById<Button>(R.id.easyButton)
+        val easyBtnStream = assets.open("Backgrounds/easy_diff_background_btn.png")
+        val easyBtnDrawable = Drawable.createFromStream(easyBtnStream, null)
+        easyBtn.background = easyBtnDrawable
+
+        // MEDIUM BACKGROUND
+        val mediumBtn = findViewById<Button>(R.id.mediumButton)
+        val mediumBtnStream = assets.open("Backgrounds/medium_diff_background_btn.png")
+        val mediumBtnDrawable = Drawable.createFromStream(mediumBtnStream, null)
+        mediumBtn.background = mediumBtnDrawable
+
+        // HELL BACKGROUND
+        val hellBtn = findViewById<Button>(R.id.hardButton)
+        val hellBtnStream = assets.open("Backgrounds/hard_diff_background_btn.png")
+        val hellBtnDrawable = Drawable.createFromStream(hellBtnStream, null)
+        hellBtn.background = hellBtnDrawable
+
         fadeIn(diffContainer)
         diffContainer.visibility = View.VISIBLE
     }

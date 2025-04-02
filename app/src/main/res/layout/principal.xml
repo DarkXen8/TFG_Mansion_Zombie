@@ -38,19 +38,25 @@
         android:layout_width="208dp"
         android:layout_height="114dp"
         android:text="PLAY"
+        android:fontFamily="@font/pixel_font"
         android:textSize="35sp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/imageView4"
         app:layout_constraintTop_toBottomOf="@+id/logo_img"
         app:layout_constraintVertical_bias="0.389" />
 
+
     <!-- Contenedor de dificultad en CardView -->
     <androidx.cardview.widget.CardView
         android:id="@+id/difficultyContainer"
         android:layout_width="265dp"
         android:layout_height="403dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/imageView4"
@@ -71,20 +77,42 @@
                 android:layout_width="186dp"
                 android:layout_height="74dp"
                 android:layout_marginBottom="10dp"
-                android:text="Fácil" />
+                android:fontFamily="@font/pixel_font"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="EASY"
+                android:textAllCaps="true"/>
+
 
             <Button
                 android:id="@+id/mediumButton"
                 android:layout_width="186dp"
                 android:layout_height="74dp"
                 android:layout_marginBottom="10dp"
-                android:text="Medio" />
+                android:fontFamily="@font/pixel_font"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="MEDIUM"
+                android:textAllCaps="true"/>
+
 
             <Button
                 android:id="@+id/hardButton"
                 android:layout_width="186dp"
                 android:layout_height="74dp"
-                android:text="Difícil" />
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/pixel_font"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="HELL"
+                android:textAllCaps="true"/>
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
