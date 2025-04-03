@@ -8,6 +8,22 @@
     android:background="@color/black">
 
     <ImageView
+        android:id="@+id/dmgBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:elevation="5dp"
+        android:background="@drawable/dmg_background"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
         android:id="@+id/initialBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -67,7 +83,77 @@
         app:layout_constraintHorizontal_bias="0.06"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.168"
+        app:layout_constraintVertical_bias="0.128"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/enemyDmg"
+        android:layout_width="110dp"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:text="-0HP"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.053"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.221"
+        tools:ignore="HardcodedText,RtlCompat" />
+
+    <TextView
+        android:id="@+id/playerDmg"
+        android:layout_width="110dp"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:text="-0HP"
+        android:textAlignment="center"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.946"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.221"
+        tools:ignore="HardcodedText,RtlCompat" />
+
+    <ProgressBar
+        android:id="@+id/EnemyHP_Bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="144dp"
+        android:layout_height="29dp"
+        android:max="100"
+        android:progress="100"
+        android:progressDrawable="@drawable/custom_progress_bar"
+        android:progressTint="@android:color/holo_red_dark"
+        android:scaleX="-1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.94"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.179" />
+
+    <TextView
+        android:id="@+id/EnemyHP"
+        android:layout_width="155dp"
+        android:layout_height="36dp"
+        android:text="EnemyHP"
+        android:textAlignment="textEnd"
+        android:textColor="@android:color/white"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.937"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.128"
         tools:ignore="HardcodedText" />
 
     <ProgressBar
@@ -84,7 +170,7 @@
         app:layout_constraintHorizontal_bias="0.059"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.219" />
+        app:layout_constraintVertical_bias="0.179" />
 
     <TextView
         android:id="@+id/playerHPInsideBar"
@@ -120,40 +206,6 @@
         app:layout_constraintStart_toStartOf="@+id/EnemyHP_Bar"
         app:layout_constraintTop_toTopOf="@+id/EnemyHP_Bar"
         tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/EnemyHP"
-        android:layout_width="155dp"
-        android:layout_height="36dp"
-        android:text="EnemyHP"
-        android:textAlignment="textEnd"
-        android:textColor="@android:color/white"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.937"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.169"
-        tools:ignore="HardcodedText" />
-
-    <ProgressBar
-        android:id="@+id/EnemyHP_Bar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="144dp"
-        android:layout_height="29dp"
-        android:max="100"
-        android:progress="100"
-        android:progressDrawable="@drawable/custom_progress_bar"
-        android:progressTint="@android:color/holo_red_dark"
-        android:scaleX="-1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.94"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.219" />
 
     <ImageView
         android:id="@+id/EnemySprite"
@@ -221,5 +273,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.954"
         tools:ignore="HardcodedText" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

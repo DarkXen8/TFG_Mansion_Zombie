@@ -138,6 +138,13 @@ class PartidaActivity : ComponentActivity() {
             enemyHP.text = enemigo.vida.toString() + "/" + enemigoMaxHP
             enemyHPBar.progress = enemigo.vida
             enemigo.atacar(jugador)
+
+            // MOSTRAR DAÑO
+            val playerDmg = findViewById<TextView>(R.id.enemyDmg)
+
+            playerDmg.visibility = View.VISIBLE
+
+
             playerHP.text = jugador.vida.toString() + "/" + jugadorMaxHP
             playerHPBar.progress = jugador.vida
             if (jugador.vida == 0){
