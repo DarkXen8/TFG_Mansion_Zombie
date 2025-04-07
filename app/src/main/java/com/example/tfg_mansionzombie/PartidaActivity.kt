@@ -5,11 +5,13 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AlphaAnimation
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import kotlinx.coroutines.delay
 
 
 class PartidaActivity : ComponentActivity() {
@@ -121,40 +123,59 @@ class PartidaActivity : ComponentActivity() {
     ) {
         jugador.atacar(enemigo)
 
-        if (enemigo.vida == 0){
+        if (enemigo.vida == 0) {
             enemySprite.visibility = View.GONE
             enemyHPBar.visibility = View.GONE
             enemyHPText.visibility = View.GONE
             enemyHP.visibility = View.GONE
             atacarBtn.isEnabled = false
-            if (jugador.curaciones){
-                curarBtn.isEnabled = true
-            }
-            if (jugador.busquedas != 0){
-                buscarBtn.isEnabled = true
-            }
+            if (jugador.curaciones) curarBtn.isEnabled = true
+            if (jugador.busquedas != 0) buscarBtn.isEnabled = true
             avanzarBtn.isEnabled = true
-        }else{
-            enemyHP.text = enemigo.vida.toString() + "/" + enemigoMaxHP
+        } else {
+            // Actualizamos vida del enemigo
+            enemyHP.text = "${enemigo.vida}/${enemigoMaxHP}"
             enemyHPBar.progress = enemigo.vida
+
+            // El enemigo ataca al jugador
             enemigo.atacar(jugador)
 
-            // MOSTRAR DAÑO
-            val playerDmg = findViewById<TextView>(R.id.enemyDmg)
-
-            playerDmg.visibility = View.VISIBLE
-
-
-            playerHP.text = jugador.vida.toString() + "/" + jugadorMaxHP
+            // ✅ Primero actualizar vida del jugador
+            playerHP.text = "${jugador.vida}/${jugadorMaxHP}"
             playerHPBar.progress = jugador.vida
-            if (jugador.vida == 0){
-                atacarBtn.isEnabled = false
-                curarBtn.isEnabled = false
-                buscarBtn.isEnabled = false
-                avanzarBtn.isEnabled = false
+
+            // ✅ Luego mostrar daño recibido
+            val enemyDmg = findViewById<TextView>(R.id.enemyDmg)
+            enemyDmg.text = "-${enemigo.daño}"
+            enemyDmg.visibility = View.VISIBLE
+
+            val fadeout = AlphaAnimation(1f, 0f).apply {
+                duration = 1000
+                fillAfter = false
             }
+
+            fadeout.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
+                override fun onAnimationStart(animation: android.view.animation.Animation?) {}
+
+                override fun onAnimationEnd(animation: android.view.animation.Animation?) {
+                    enemyDmg.visibility = View.GONE
+
+                    // ⚠️ Comprobar si el jugador ha muerto al final
+                    if (jugador.vida == 0) {
+                        atacarBtn.isEnabled = false
+                        curarBtn.isEnabled = false
+                        buscarBtn.isEnabled = false
+                        avanzarBtn.isEnabled = false
+                    }
+                }
+
+                override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
+            })
+
+            enemyDmg.startAnimation(fadeout)
         }
     }
+
 
     @SuppressLint("SetTextI18n")
     fun curar(curarBtn: Button, playerHPBar: ProgressBar, playerHP: TextView) {
