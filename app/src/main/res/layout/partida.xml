@@ -267,7 +267,7 @@
         android:id="@+id/next_btn"
         android:layout_width="137dp"
         android:layout_height="65dp"
-        android:text="Avanzar"
+        android:background="@drawable/next_button_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.781"

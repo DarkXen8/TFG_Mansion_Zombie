@@ -88,9 +88,13 @@ class PartidaActivity : ComponentActivity() {
         enemyHPText.visibility = View.GONE
         enemyHP.visibility = View.GONE
         atacarBtn.isEnabled = false
+        atacarBtn.alpha = 0.5f
         curarBtn.isEnabled = false
+        curarBtn.alpha = 0.5f
         buscarBtn.isEnabled = false
+        buscarBtn.alpha = 0.5f
         avanzarBtn.isEnabled = true
+        avanzarBtn.alpha = 1.0f
 
 
         // LLAMADAS DE LOS BOTONES AL SER PULSADOS
@@ -129,9 +133,17 @@ class PartidaActivity : ComponentActivity() {
             enemyHPText.visibility = View.GONE
             enemyHP.visibility = View.GONE
             atacarBtn.isEnabled = false
-            if (jugador.curaciones) curarBtn.isEnabled = true
-            if (jugador.busquedas != 0) buscarBtn.isEnabled = true
+            atacarBtn.alpha = 0.5f
+            if (jugador.curaciones){
+                curarBtn.isEnabled = true
+                curarBtn.alpha = 1.0f
+            }
+            if (jugador.busquedas != 0){
+                buscarBtn.isEnabled = true
+                buscarBtn.alpha = 1.0f
+            }
             avanzarBtn.isEnabled = true
+            avanzarBtn.alpha = 1.0f
         } else {
             // Actualizamos vida del enemigo
             enemyHP.text = "${enemigo.vida}/${enemigoMaxHP}"
@@ -163,9 +175,13 @@ class PartidaActivity : ComponentActivity() {
                     // ⚠️ Comprobar si el jugador ha muerto al final
                     if (jugador.vida == 0) {
                         atacarBtn.isEnabled = false
+                        atacarBtn.alpha = 0.5f
                         curarBtn.isEnabled = false
+                        curarBtn.alpha = 0.5f
                         buscarBtn.isEnabled = false
+                        buscarBtn.alpha = 0.5f
                         avanzarBtn.isEnabled = false
+                        avanzarBtn.alpha = 0.5f
                     }
                 }
 
@@ -181,6 +197,7 @@ class PartidaActivity : ComponentActivity() {
     fun curar(curarBtn: Button, playerHPBar: ProgressBar, playerHP: TextView) {
         jugador.curarse()
         curarBtn.isEnabled = false
+        curarBtn.alpha = 0.5f
         playerHPBar.progress = jugador.vida
         playerHP.text = jugador.vida.toString() + "/" + jugadorMaxHP
         jugador.curaciones = false
@@ -201,6 +218,7 @@ class PartidaActivity : ComponentActivity() {
         if (searchRandom == 1){
             jugador.curaciones = true
             curarBtn.isEnabled = true
+            curarBtn.alpha = 1.0f
         }
         if ( searchRandom == 2){
             jugador.armas += 1
@@ -214,6 +232,7 @@ class PartidaActivity : ComponentActivity() {
         jugador.busquedas -= 1
         if (jugador.busquedas == 0){
             buscarBtn.isEnabled = false
+            buscarBtn.alpha = 0.5f
         }
     }
 
@@ -229,15 +248,27 @@ class PartidaActivity : ComponentActivity() {
         enemyHP: TextView,
         roomNumberText: TextView
     ) {
-        if (actualRoom != maxRoom){
+        if (actualRoom != maxRoom) {
             spawnZombie(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP)
             backgroundRandomizer()
             jugador.busquedas = 3
             actualRoom += 1
-            roomNumberText.text = actualRoom.toString() + "/" + maxRoom.toString()
+            roomNumberText.text = "$actualRoom/$maxRoom"
+
+            if (actualRoom == maxRoom) {
+                try {
+                    val inputStream = assets.open("Backgrounds/exit_button_background.png")
+                    val drawable = Drawable.createFromStream(inputStream, null)
+                    avanzarBtn.background = drawable
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        } else {
+            // IMPLEMENTAR VENTANA DE VICTORIA
         }
-        // IMPLEMENTAR LA VENTANA DE VICTORIA
     }
+
 
     @SuppressLint("SetTextI18n")
     fun spawnZombie(
@@ -265,11 +296,15 @@ class PartidaActivity : ComponentActivity() {
         enemyHPBar.progress = enemigoMaxHP
 
         atacarBtn.isEnabled = true
+        atacarBtn.alpha = 1.0f
         if (jugador.curaciones){
             curarBtn.isEnabled = true
+            curarBtn.alpha = 1.0f
         }
         buscarBtn.isEnabled = false
+        buscarBtn.alpha = 0.5f
         avanzarBtn.isEnabled = false
+        avanzarBtn.alpha = 0.5f
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
