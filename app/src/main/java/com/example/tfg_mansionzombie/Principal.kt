@@ -110,6 +110,11 @@ class Principal : ComponentActivity() {
         val intent = Intent(this, PartidaActivity::class.java).apply {
             putExtra("DIFFICULTY_LEVEL", difficulty)
         }
+
+        // DETENEMOS LA MUSICA DE FONDO
+        val musicIntent = Intent(this, MusicService::class.java)
+        stopService(musicIntent)
+
         startActivity(intent)
     }
 }

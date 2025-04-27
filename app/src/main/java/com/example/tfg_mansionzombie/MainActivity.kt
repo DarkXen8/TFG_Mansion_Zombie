@@ -16,6 +16,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.loading)
 
+        // INICIALIZAMOS LA MUSICA DE FONDO
+        val musicIntent = Intent(this, MusicService::class.java)
+        startService(musicIntent)
 
 
         val imageView = findViewById<ImageView>(R.id.loading_background)

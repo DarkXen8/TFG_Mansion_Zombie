@@ -11,7 +11,11 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class PartidaActivity : ComponentActivity() {
@@ -28,6 +32,8 @@ class PartidaActivity : ComponentActivity() {
     private var prevRoom: Int = 1
     private var maxRoom: Int = 0
     private var actualRoom: Int = 0
+
+    private var actualSprite: Int = 0
 
 
     @SuppressLint("SetTextI18n")
@@ -126,6 +132,39 @@ class PartidaActivity : ComponentActivity() {
         playerHPBar: ProgressBar
     ) {
         jugador.atacar(enemigo)
+
+        GlobalScope.launch(Dispatchers.Main) {
+            val dmgDrawable = withContext(Dispatchers.IO) {
+                assets.open("EnemySprites/dmg_enemy_$actualSprite.png").use {
+                    Drawable.createFromStream(it, null)
+                }
+            }
+            enemySprite.setImageDrawable(dmgDrawable)
+            atacarBtn.isEnabled = false
+            atacarBtn.alpha = 0.5f
+            curarBtn.isEnabled = false
+            curarBtn.alpha = 0.5f
+
+
+            delay(1000)
+
+            val normalDrawable = withContext(Dispatchers.IO) {
+                assets.open("EnemySprites/enemy_$actualSprite.png").use {
+                    Drawable.createFromStream(it, null)
+                }
+            }
+            enemySprite.setImageDrawable(normalDrawable)
+            if (enemigo.vida != 0){
+                atacarBtn.isEnabled = true
+                atacarBtn.alpha = 1.0f
+                if (jugador.curaciones){
+                    curarBtn.isEnabled = true
+                    curarBtn.alpha = 1.0f
+                }
+            }
+
+        }
+
 
         if (enemigo.vida == 0) {
             enemySprite.visibility = View.GONE
@@ -349,6 +388,14 @@ class PartidaActivity : ComponentActivity() {
             3 -> "EnemySprites/enemy_3.png"
             4 -> "EnemySprites/enemy_4.png"
             else -> "EnemySprites/enemy_1.png"
+        }
+
+        actualSprite = when (nuevoZombie){
+            1 -> 1
+            2 -> 2
+            3 -> 3
+            4 -> 4
+            else -> 0
         }
 
         try {

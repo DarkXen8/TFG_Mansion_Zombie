@@ -276,6 +276,50 @@
         app:layout_constraintVertical_bias="0.954"
         tools:ignore="HardcodedText" />
 
+    <FrameLayout
+        android:layout_width="321dp"
+        android:layout_height="495dp"
+        android:background="@drawable/victory_background"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="225dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100dp"
+            android:text="VICTORIA"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:fontFamily="@font/pixel_font"
+            android:textColor="@color/red"
+            android:textSize="25dp"
+            android:elevation="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="225dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100dp"
+            android:text="VICTORIA"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:fontFamily="@font/pixel_font"
+            android:textColor="@color/black"
+            android:textSize="26.3dp"
+            android:elevation="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </FrameLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
