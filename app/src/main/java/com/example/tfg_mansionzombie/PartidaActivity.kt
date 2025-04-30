@@ -1,6 +1,7 @@
 package com.example.tfg_mansionzombie
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -34,6 +35,7 @@ class PartidaActivity : ComponentActivity() {
     private var actualRoom: Int = 0
 
     private var actualSprite: Int = 0
+    private var difficulty: Int = 0
 
 
     @SuppressLint("SetTextI18n")
@@ -47,7 +49,7 @@ class PartidaActivity : ComponentActivity() {
         initialBackground.setImageDrawable(drawable)
 
 
-        val difficulty = intent.getIntExtra("DIFFICULTY_LEVEL", 1)
+        difficulty = intent.getIntExtra("DIFFICULTY_LEVEL", 1)
         val difficultyText = findViewById<TextView>(R.id.DifficultySelected)
         val roomNumberText = findViewById<TextView>(R.id.RoomNumber)
 
@@ -304,7 +306,18 @@ class PartidaActivity : ComponentActivity() {
                 }
             }
         } else {
-            // IMPLEMENTAR VENTANA DE VICTORIA
+            val intent = Intent(this, PartidaActivity::class.java).apply {
+                putExtra("PLAYER_HEALTH", jugador.vida)
+                putExtra("PLAYER_DAMAGE", (jugador.daño + (jugador.armas * 10)))
+                putExtra("MAX_ROOM", actualRoom)
+                putExtra("DIFFICULTY", difficulty)
+            }
+
+            // MODIFICAR PARA DETENER LA MUSICA DE PARTIDA
+            val musicIntent = Intent(this, GameMusicService::class.java)
+            stopService(musicIntent)
+
+            startActivity(intent)
         }
     }
 

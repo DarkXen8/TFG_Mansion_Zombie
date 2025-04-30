@@ -112,7 +112,7 @@ class Principal : ComponentActivity() {
         }
 
         // DETENEMOS LA MUSICA DE FONDO
-        val musicIntent = Intent(this, MusicService::class.java)
+        val musicIntent = Intent(this, InitialMusicService::class.java)
         stopService(musicIntent)
 
         startActivity(intent)

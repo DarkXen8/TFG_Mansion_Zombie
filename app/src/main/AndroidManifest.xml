@@ -34,7 +34,7 @@
             android:name=".PartidaActivity">
         </activity>
 
-        <service android:name=".MusicService" />
+        <service android:name=".InitialMusicService" />
 
     </application>
 
