@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/victory_background"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/victoriaTxtRed"
+            android:layout_width="300dp"
+            android:layout_height="75dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="135dp"
+            android:text="VICTORIA"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:fontFamily="@font/pixel_font"
+            android:textColor="@color/red"
+            android:textSize="35dp"
+            android:elevation="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/victoriaTxtBlack"
+            android:layout_width="300dp"
+            android:layout_height="75dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="135dp"
+            android:text="VICTORIA"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:fontFamily="@font/pixel_font"
+            android:textColor="@color/black"
+            android:textSize="37dp"
+            android:elevation="1dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/estadisticasTxt"
+            android:layout_width="400dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="210dp"
+            android:elevation="1dp"
+            android:fontFamily="@font/pixel_font"
+            android:gravity="center"
+            android:text="|Estadísticas|"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/vidaTxt"
+            android:layout_width="250dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="250dp"
+            android:elevation="1dp"
+            android:fontFamily="@font/pixel_font"
+            android:gravity="center"
+            android:text="Vida (HP):"
+            android:textAlignment="center"
+            android:textColor="@color/green"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/vidaVal"
+            android:layout_width="250dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="285dp"
+            android:elevation="1dp"
+            android:fontFamily="@font/pixel_font"
+            android:gravity="center"
+            android:text="[Health]"
+            android:textAlignment="center"
+            android:textColor="@color/green"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/danioTxt"
+            android:layout_width="250dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="325dp"
+            android:elevation="1dp"
+            android:fontFamily="@font/pixel_font"
+            android:gravity="center"
+            android:text="Daño (DMG):"
+            android:textAlignment="center"
+            android:textColor="@color/red"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/danioVal"
+            android:layout_width="250dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="360dp"
+            android:elevation="1dp"
+            android:fontFamily="@font/pixel_font"
+            android:gravity="center"
+            android:text="[Damage]"
+            android:textAlignment="center"
+            android:textColor="@color/red"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/salaMaxTxt"
+            android:layout_width="250dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="400dp"
+            android:elevation="1dp"
+            android:fontFamily="@font/pixel_font"
+            android:gravity="center"
+            android:text="Sala (MAX):"
+            android:textAlignment="center"
+            android:textColor="@color/gold"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/salaMaxVal"
+            android:layout_width="250dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="435dp"
+            android:elevation="1dp"
+            android:fontFamily="@font/pixel_font"
+            android:gravity="center"
+            android:text="[MaxRoom]"
+            android:textAlignment="center"
+            android:textColor="@color/gold"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </FrameLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
