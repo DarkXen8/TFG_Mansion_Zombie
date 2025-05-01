@@ -5,7 +5,7 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.os.IBinder
 
-class MusicService : Service() {
+class InitialMusicService : Service() {
 
     private lateinit var mediaPlayer: MediaPlayer
 
@@ -13,7 +13,7 @@ class MusicService : Service() {
         super.onCreate()
 
         // Inicializamos la música
-        mediaPlayer = MediaPlayer.create(this, R.raw.intro_background_music) // cambia "bg_music" por el nombre real
+        mediaPlayer = MediaPlayer.create(this, R.raw.intro_background_music)
         mediaPlayer.isLooping = true // Música en bucle
         mediaPlayer.setVolume(0.5f, 0.5f) // Volumen (puedes ajustar)
     }
@@ -32,6 +32,6 @@ class MusicService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-        return null // No necesitamos comunicación directa
+        return null
     }
 }

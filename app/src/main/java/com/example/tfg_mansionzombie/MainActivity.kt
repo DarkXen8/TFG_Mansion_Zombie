@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         setContentView(R.layout.loading)
 
         // INICIALIZAMOS LA MUSICA DE FONDO
-        val musicIntent = Intent(this, MusicService::class.java)
+        val musicIntent = Intent(this, InitialMusicService::class.java)
         startService(musicIntent)
 
 
