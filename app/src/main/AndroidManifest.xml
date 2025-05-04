@@ -34,7 +34,10 @@
             android:name=".PartidaActivity">
         </activity>
 
+        <activity android:name=".VictoriaActivity"/>
+
         <service android:name=".InitialMusicService" />
+        <service android:name=".GameMusicService" />
 
     </application>
 

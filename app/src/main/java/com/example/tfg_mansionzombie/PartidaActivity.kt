@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -37,11 +38,16 @@ class PartidaActivity : ComponentActivity() {
     private var actualSprite: Int = 0
     private var difficulty: Int = 0
 
+    private var fail: Boolean = false
+
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.partida)
+
+        val musicIntent = Intent(this, GameMusicService::class.java)
+        startService(musicIntent)
 
         initialBackground = findViewById(R.id.initialBackground)
         val inputStream = assets.open("Backgrounds/room_1.png")
@@ -116,7 +122,7 @@ class PartidaActivity : ComponentActivity() {
             buscar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP)
         }
         avanzarBtn.setOnClickListener {
-            avanzar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, roomNumberText)
+            avanzar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, roomNumberText, musicIntent)
         }
     }
 
@@ -133,105 +139,153 @@ class PartidaActivity : ComponentActivity() {
         playerHP: TextView,
         playerHPBar: ProgressBar
     ) {
-        jugador.atacar(enemigo)
+        atacarBtn.isEnabled = false
+        atacarBtn.alpha = 0.5f
+        curarBtn.isEnabled = false
+        curarBtn.alpha = 0.5f
 
-        GlobalScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch {
+            // 1. Ataca el jugador
+            jugador.atacar(enemigo)
+
+            // 2. Mostrar daño hecho al zombi
+            val dmgJugador = jugador.daño + (jugador.armas * 10)
+            val dmgTxt = findViewById<TextView>(R.id.playerDmg)
+            dmgTxt.text = "-$dmgJugador"
+            dmgTxt.translationY = 0f
+            dmgTxt.alpha = 1f
+            dmgTxt.visibility = View.VISIBLE
+
+            dmgTxt.animate()
+                .translationY(50f)
+                .alpha(0f)
+                .setDuration(1000)
+                .withEndAction { dmgTxt.visibility = View.GONE }
+                .start()
+
+            // 3. Cambiar sprite a dañado
             val dmgDrawable = withContext(Dispatchers.IO) {
                 assets.open("EnemySprites/dmg_enemy_$actualSprite.png").use {
                     Drawable.createFromStream(it, null)
                 }
             }
             enemySprite.setImageDrawable(dmgDrawable)
-            atacarBtn.isEnabled = false
-            atacarBtn.alpha = 0.5f
-            curarBtn.isEnabled = false
-            curarBtn.alpha = 0.5f
+
+            // 4. Actualizar vida del enemigo inmediatamente
+            enemyHP.text = "${enemigo.vida}/${enemigoMaxHP}"
+            enemyHPBar.progress = enemigo.vida
 
 
+            if (enemigo.vida == 0) {
+                atacarBtn.isEnabled = false
+                atacarBtn.alpha = 0.5f
+                curarBtn.isEnabled = false
+                curarBtn.alpha = 0.5f
+                buscarBtn.isEnabled = false
+                buscarBtn.alpha = 0.5f
+                avanzarBtn.isEnabled = false
+                avanzarBtn.alpha = 0.5f
+
+                enemySprite.animate()
+                    .translationY(50f)
+                    .alpha(0f)
+                    .setDuration(1000)
+                    .withStartAction {
+                        enemyHPBar.animate().alpha(0f).setDuration(1000).start()
+                        enemyHP.animate().alpha(0f).setDuration(1000).start()
+                        enemyHPText.animate().alpha(0f).setDuration(1000).start()
+                    }
+                    .withEndAction {
+                        enemySprite.visibility = View.GONE
+                        enemySprite.alpha = 1f
+                        enemySprite.translationY = 0f
+
+                        enemyHPBar.visibility = View.GONE
+                        enemyHPText.visibility = View.GONE
+                        enemyHP.visibility = View.GONE
+                        enemyHPBar.alpha = 1f
+                        enemyHP.alpha = 1f
+                        enemyHPText.alpha = 1f
+
+                        avanzarBtn.isEnabled = true
+                        avanzarBtn.alpha = 1.0f
+                        if (jugador.curaciones) {
+                            curarBtn.isEnabled = true
+                            curarBtn.alpha = 1.0f
+                        }
+                        if (jugador.busquedas > 0) {
+                            buscarBtn.isEnabled = true
+                            buscarBtn.alpha = 1.0f
+                        }
+                    }
+                    .start()
+
+                return@launch // ✅ ¡Evita continuar el combate!
+            }
+
+
+
+            // 5. Esperar 1 segundo y volver al sprite normal (solo si el enemigo no murió)
             delay(1000)
-
             val normalDrawable = withContext(Dispatchers.IO) {
                 assets.open("EnemySprites/enemy_$actualSprite.png").use {
                     Drawable.createFromStream(it, null)
                 }
             }
             enemySprite.setImageDrawable(normalDrawable)
-            if (enemigo.vida != 0){
+
+            // 6. El enemigo ataca al jugador
+            enemigo.atacar(jugador)
+
+            // 7. Pantalla roja de daño
+            val screenOverlay = findViewById<View>(R.id.redOverlay)
+            screenOverlay.alpha = 0.6f
+            screenOverlay.visibility = View.VISIBLE
+            screenOverlay.animate().alpha(0f).setDuration(1000).withEndAction {
+                screenOverlay.visibility = View.GONE
+            }
+
+            // 8. Mostrar daño recibido
+            val enemyDmg = findViewById<TextView>(R.id.enemyDmg)
+            enemyDmg.text = "-${enemigo.daño}"
+            enemyDmg.translationY = 0f
+            enemyDmg.alpha = 1f
+            enemyDmg.visibility = View.VISIBLE
+
+            enemyDmg.animate()
+                .translationY(50f)
+                .alpha(0f)
+                .setDuration(1000)
+                .withEndAction { enemyDmg.visibility = View.GONE }
+                .start()
+
+            // 9. Actualizar vida del jugador
+            playerHP.text = "${jugador.vida}/${jugadorMaxHP}"
+            playerHPBar.progress = jugador.vida
+
+            // 10. Verificar si muere el jugador
+            if (jugador.vida == 0) {
+                fail = true
+                avanzarBtn.isEnabled = true
+                avanzarBtn.alpha = 1.0f
+                val exitDrawable = withContext(Dispatchers.IO) {
+                    assets.open("Backgrounds/exit_button_background.png").use {
+                        Drawable.createFromStream(it, null)
+                    }
+                }
+                avanzarBtn.background = exitDrawable
+            } else {
                 atacarBtn.isEnabled = true
                 atacarBtn.alpha = 1.0f
-                if (jugador.curaciones){
+                if (jugador.curaciones) {
                     curarBtn.isEnabled = true
                     curarBtn.alpha = 1.0f
                 }
             }
-
-        }
-
-
-        if (enemigo.vida == 0) {
-            enemySprite.visibility = View.GONE
-            enemyHPBar.visibility = View.GONE
-            enemyHPText.visibility = View.GONE
-            enemyHP.visibility = View.GONE
-            atacarBtn.isEnabled = false
-            atacarBtn.alpha = 0.5f
-            if (jugador.curaciones){
-                curarBtn.isEnabled = true
-                curarBtn.alpha = 1.0f
-            }
-            if (jugador.busquedas != 0){
-                buscarBtn.isEnabled = true
-                buscarBtn.alpha = 1.0f
-            }
-            avanzarBtn.isEnabled = true
-            avanzarBtn.alpha = 1.0f
-        } else {
-            // Actualizamos vida del enemigo
-            enemyHP.text = "${enemigo.vida}/${enemigoMaxHP}"
-            enemyHPBar.progress = enemigo.vida
-
-            // El enemigo ataca al jugador
-            enemigo.atacar(jugador)
-
-            // ✅ Primero actualizar vida del jugador
-            playerHP.text = "${jugador.vida}/${jugadorMaxHP}"
-            playerHPBar.progress = jugador.vida
-
-            // ✅ Luego mostrar daño recibido
-            val enemyDmg = findViewById<TextView>(R.id.enemyDmg)
-            enemyDmg.text = "-${enemigo.daño}"
-            enemyDmg.visibility = View.VISIBLE
-
-            val fadeout = AlphaAnimation(1f, 0f).apply {
-                duration = 1000
-                fillAfter = false
-            }
-
-            fadeout.setAnimationListener(object : android.view.animation.Animation.AnimationListener {
-                override fun onAnimationStart(animation: android.view.animation.Animation?) {}
-
-                override fun onAnimationEnd(animation: android.view.animation.Animation?) {
-                    enemyDmg.visibility = View.GONE
-
-                    // ⚠️ Comprobar si el jugador ha muerto al final
-                    if (jugador.vida == 0) {
-                        atacarBtn.isEnabled = false
-                        atacarBtn.alpha = 0.5f
-                        curarBtn.isEnabled = false
-                        curarBtn.alpha = 0.5f
-                        buscarBtn.isEnabled = false
-                        buscarBtn.alpha = 0.5f
-                        avanzarBtn.isEnabled = false
-                        avanzarBtn.alpha = 0.5f
-                    }
-                }
-
-                override fun onAnimationRepeat(animation: android.view.animation.Animation?) {}
-            })
-
-            enemyDmg.startAnimation(fadeout)
         }
     }
+
+
 
 
     @SuppressLint("SetTextI18n")
@@ -287,8 +341,26 @@ class PartidaActivity : ComponentActivity() {
         buscarBtn: Button,
         avanzarBtn: Button,
         enemyHP: TextView,
-        roomNumberText: TextView
+        roomNumberText: TextView,
+        musicIntent: Intent
     ) {
+        if (fail) {
+            // Si el jugador ha perdido
+            val intent = Intent(this, VictoriaActivity::class.java).apply {
+                putExtra("PLAYER_HEALTH", jugador.vida)
+                putExtra("PLAYER_DAMAGE", jugador.daño + (jugador.armas * 10))
+                putExtra("MAX_ROOM", actualRoom)
+                putExtra("DIFFICULTY_LEVEL", difficulty)
+                putExtra("FAIL", true)
+            }
+
+            stopService(musicIntent)
+            startActivity(intent)
+            finish()
+            return
+        }
+
+        // Si el jugador sigue vivo
         if (actualRoom != maxRoom) {
             spawnZombie(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP)
             backgroundRandomizer()
@@ -306,20 +378,21 @@ class PartidaActivity : ComponentActivity() {
                 }
             }
         } else {
-            val intent = Intent(this, PartidaActivity::class.java).apply {
+            // Si llega al final y gana
+            val intent = Intent(this, VictoriaActivity::class.java).apply {
                 putExtra("PLAYER_HEALTH", jugador.vida)
-                putExtra("PLAYER_DAMAGE", (jugador.daño + (jugador.armas * 10)))
+                putExtra("PLAYER_DAMAGE", jugador.daño + (jugador.armas * 10))
                 putExtra("MAX_ROOM", actualRoom)
-                putExtra("DIFFICULTY", difficulty)
+                putExtra("DIFFICULTY_LEVEL", difficulty)
+                putExtra("FAIL", false)
             }
 
-            // MODIFICAR PARA DETENER LA MUSICA DE PARTIDA
-            val musicIntent = Intent(this, GameMusicService::class.java)
             stopService(musicIntent)
-
             startActivity(intent)
+            finish()
         }
     }
+
 
 
     @SuppressLint("SetTextI18n")
@@ -340,6 +413,11 @@ class PartidaActivity : ComponentActivity() {
         enemyHPBar.visibility = View.VISIBLE
         enemyHPText.visibility = View.VISIBLE
         enemyHP.visibility = View.VISIBLE
+
+        enemyHPBar.alpha = 1f
+        enemyHP.alpha = 1f
+        enemyHPText.alpha = 1f
+
 
         enemigoMaxHP = enemigo.vida
 

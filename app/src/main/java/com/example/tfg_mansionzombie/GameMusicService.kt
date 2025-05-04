@@ -13,9 +13,9 @@ class GameMusicService : Service() {
         super.onCreate()
 
         // Inicializamos la música
-        mediaPlayer = MediaPlayer.create(this, R.raw.intro_background_music) // Cambiar el archivo de musica
+        mediaPlayer = MediaPlayer.create(this, R.raw.game_background_music) // Cambiar el archivo de musica
         mediaPlayer.isLooping = true // Música en bucle
-        mediaPlayer.setVolume(0.5f, 0.5f) // Volumen (puedes ajustar)
+        mediaPlayer.setVolume(3f, 3f) // Volumen (puedes ajustar)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
