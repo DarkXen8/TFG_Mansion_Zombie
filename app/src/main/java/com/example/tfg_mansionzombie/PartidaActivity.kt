@@ -54,6 +54,10 @@ class PartidaActivity : ComponentActivity() {
         val drawable = Drawable.createFromStream(inputStream, null)
         initialBackground.setImageDrawable(drawable)
 
+        val saveBtn = findViewById<Button>(R.id.saveBtn)
+        val saveBtnStream = assets.open("Backgrounds/saveBtnIcon.png")
+        val saveBtnDrawable = Drawable.createFromStream(saveBtnStream, null)
+        saveBtn.background = saveBtnDrawable
 
         difficulty = intent.getIntExtra("DIFFICULTY_LEVEL", 1)
         val difficultyText = findViewById<TextView>(R.id.DifficultySelected)
@@ -500,5 +504,17 @@ class PartidaActivity : ComponentActivity() {
     }
 
 
+    override fun onDestroy() {
+        super.onDestroy()
 
+        val musicIntent = Intent(this, GameMusicService::class.java)
+        stopService(musicIntent)
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        val musicIntent = Intent(this, GameMusicService::class.java)
+        
+    }
 }

@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.tfg_mansionzombie"
-    compileSdk = 35
+    compileSdk = 35 // ← Subido de 34 a 35
 
     defaultConfig {
         applicationId = "com.example.tfg_mansionzombie"
-        minSdk = 35
-        targetSdk = 35
+        minSdk = 30
+        targetSdk = 34 // Puedes dejarlo en 34 si no quieres activar nuevos comportamientos de Android 15
         versionCode = 1
         versionName = "1.0"
 
@@ -29,35 +29,38 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
     sourceSets {
         getByName("main") {
-            assets {
-                srcDirs("src\\main\\assets", "src\\main\\assets")
-            }
+            assets.srcDirs("src/main/assets")
         }
     }
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
