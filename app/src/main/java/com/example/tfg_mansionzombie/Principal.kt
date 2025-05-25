@@ -24,6 +24,28 @@ class Principal : ComponentActivity() {
         play.background = drawable
         val background = findViewById<ImageView>(R.id.imageView4)
 
+        val cargarBtn = findViewById<Button>(R.id.load_save)
+        val loadInputStream = assets.open("Backgrounds/load_btn.png")
+        val loadDrawable = Drawable.createFromStream(loadInputStream, null)
+        cargarBtn.background = loadDrawable
+
+        // Recuperamos si hay partida guardada o no
+        val db = openOrCreateDatabase("MansionZombieDB", MODE_PRIVATE, null)
+        val cursor = db.rawQuery("SELECT * FROM save LIMIT 1", null)
+        var saved = false
+
+        if (cursor.moveToFirst()) {
+            saved = cursor.getInt(cursor.getColumnIndexOrThrow("activo")) != 0
+        }
+
+        cursor.close()
+        db.close()
+
+
+        if (!saved){
+            cargarBtn.alpha = 0.5f
+            cargarBtn.isEnabled = false
+        }
 
         fadeIn(logo, play)
         play.setOnClickListener{
@@ -46,6 +68,9 @@ class Principal : ComponentActivity() {
         }
         dificilbtn.setOnClickListener {
             launchGame(3)
+        }
+        cargarBtn.setOnClickListener {
+            cargarPartida()
         }
     }
 
@@ -96,6 +121,18 @@ class Principal : ComponentActivity() {
 
         fadeIn(diffContainer)
         diffContainer.visibility = View.VISIBLE
+    }
+
+    private fun cargarPartida(){
+        val intent = Intent(this, PartidaActivity::class.java).apply {
+            putExtra("cargarDatos", true)
+        }
+
+        // DETENEMOS LA MUSICA DE FONDO
+        val musicIntent = Intent(this, InitialMusicService::class.java)
+        stopService(musicIntent)
+
+        startActivity(intent)
     }
 
     private fun background(background: View){

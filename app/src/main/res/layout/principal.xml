@@ -50,6 +50,23 @@
         app:layout_constraintTop_toBottomOf="@+id/logo_img"
         app:layout_constraintVertical_bias="0.389" />
 
+    <Button
+        android:id="@+id/load_save"
+        android:layout_width="180dp"
+        android:layout_height="60dp"
+        android:text="Cargar"
+        android:fontFamily="@font/pixel_font"
+        android:textSize="20dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imageView4"
+        app:layout_constraintTop_toBottomOf="@+id/play_btn"
+        app:layout_constraintVertical_bias="0.14" />
+
 
     <!-- Contenedor de dificultad en CardView -->
     <androidx.cardview.widget.CardView

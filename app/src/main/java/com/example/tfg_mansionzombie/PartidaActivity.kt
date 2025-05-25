@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
-import android.view.animation.AlphaAnimation
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -14,10 +13,11 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.content.ContentValues
+import android.widget.Toast
 
 
 class PartidaActivity : ComponentActivity() {
@@ -41,13 +41,38 @@ class PartidaActivity : ComponentActivity() {
     private var fail: Boolean = false
 
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.partida)
 
         val musicIntent = Intent(this, GameMusicService::class.java)
         startService(musicIntent)
+
+        difficulty = intent.getIntExtra("DIFFICULTY_LEVEL", 1)
+
+        jugador = Jugador()
+        jugadorMaxHP = jugador.vida
+
+        //Carga de datos desde la DB
+        val carga = intent.getBooleanExtra("cargarDatos", false)
+        if (carga){
+            val db = openOrCreateDatabase("MansionZombieDB", MODE_PRIVATE, null)
+            val cursor = db.rawQuery("SELECT * FROM save LIMIT 1", null)
+
+            cursor.moveToFirst()
+            jugador.vida = cursor.getInt(cursor.getColumnIndexOrThrow("vidaJugador"))
+            jugador.armas = cursor.getInt(cursor.getColumnIndexOrThrow("armas"))
+            jugador.protecciones = cursor.getInt(cursor.getColumnIndexOrThrow("protecciones"))
+            jugador.curaciones = cursor.getInt(cursor.getColumnIndexOrThrow("curacion")) != 0
+            actualRoom = cursor.getInt(cursor.getColumnIndexOrThrow("salaActual"))
+            difficulty = cursor.getInt(cursor.getColumnIndexOrThrow("dificultad"))
+
+            cursor.close()
+            db.close()
+
+
+        }
 
         initialBackground = findViewById(R.id.initialBackground)
         val inputStream = assets.open("Backgrounds/room_1.png")
@@ -59,7 +84,7 @@ class PartidaActivity : ComponentActivity() {
         val saveBtnDrawable = Drawable.createFromStream(saveBtnStream, null)
         saveBtn.background = saveBtnDrawable
 
-        difficulty = intent.getIntExtra("DIFFICULTY_LEVEL", 1)
+
         val difficultyText = findViewById<TextView>(R.id.DifficultySelected)
         val roomNumberText = findViewById<TextView>(R.id.RoomNumber)
 
@@ -82,8 +107,7 @@ class PartidaActivity : ComponentActivity() {
 
         roomNumberText.text = actualRoom.toString() + "/" + maxRoom.toString()
 
-        jugador = Jugador()
-        jugadorMaxHP = jugador.vida
+
         var playerHP = findViewById<TextView>(R.id.playerHPInsideBar)
         var playerHPBar = findViewById<ProgressBar>(R.id.PlayerHP_Bar)
 
@@ -117,16 +141,28 @@ class PartidaActivity : ComponentActivity() {
 
         // LLAMADAS DE LOS BOTONES AL SER PULSADOS
         atacarBtn.setOnClickListener {
-            atacar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, playerHP, playerHPBar)
+            atacar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, playerHP, playerHPBar, saveBtn)
         }
         curarBtn.setOnClickListener {
             curar(curarBtn, playerHPBar, playerHP)
         }
         buscarBtn.setOnClickListener {
-            buscar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP)
+            buscar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, saveBtn)
         }
         avanzarBtn.setOnClickListener {
-            avanzar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, roomNumberText, musicIntent)
+            avanzar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, roomNumberText, musicIntent, saveBtn)
+        }
+        val saveBTN = findViewById<Button>(R.id.saveBtn)
+        saveBTN.setOnClickListener{
+            guardarPartida()
+
+            //Volvemos a la pantalla principal tras guardar
+            val intent = Intent(this, Principal::class.java)
+            startActivity(intent)
+            finish()
+            stopService(musicIntent)
+            val InitialMusicIntent = Intent(this, InitialMusicService::class.java)
+            startService(InitialMusicIntent)
         }
     }
 
@@ -141,7 +177,8 @@ class PartidaActivity : ComponentActivity() {
         avanzarBtn: Button,
         enemyHP: TextView,
         playerHP: TextView,
-        playerHPBar: ProgressBar
+        playerHPBar: ProgressBar,
+        saveBtn: Button
     ) {
         atacarBtn.isEnabled = false
         atacarBtn.alpha = 0.5f
@@ -189,6 +226,8 @@ class PartidaActivity : ComponentActivity() {
                 buscarBtn.alpha = 0.5f
                 avanzarBtn.isEnabled = false
                 avanzarBtn.alpha = 0.5f
+                saveBtn.isEnabled = false
+                saveBtn.alpha = 0.5f
 
                 enemySprite.animate()
                     .translationY(50f)
@@ -221,6 +260,8 @@ class PartidaActivity : ComponentActivity() {
                             buscarBtn.isEnabled = true
                             buscarBtn.alpha = 1.0f
                         }
+                        saveBtn.isEnabled = true
+                        saveBtn.alpha = 1f
                     }
                     .start()
 
@@ -310,7 +351,8 @@ class PartidaActivity : ComponentActivity() {
         curarBtn: Button,
         buscarBtn: Button,
         avanzarBtn: Button,
-        enemyHP: TextView
+        enemyHP: TextView,
+        saveBtn: Button
     ) {
         val searchRandom = (1..4).random()
 
@@ -326,7 +368,17 @@ class PartidaActivity : ComponentActivity() {
             jugador.protecciones += 1
         }
         if (searchRandom == 4){
-            spawnZombie(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP)
+            spawnZombie(
+                enemySprite,
+                enemyHPBar,
+                enemyHPText,
+                atacarBtn,
+                curarBtn,
+                buscarBtn,
+                avanzarBtn,
+                enemyHP,
+                saveBtn
+            )
         }
         jugador.busquedas -= 1
         if (jugador.busquedas == 0){
@@ -346,7 +398,8 @@ class PartidaActivity : ComponentActivity() {
         avanzarBtn: Button,
         enemyHP: TextView,
         roomNumberText: TextView,
-        musicIntent: Intent
+        musicIntent: Intent,
+        saveBtn: Button,
     ) {
         if (fail) {
             // Si el jugador ha perdido
@@ -366,7 +419,7 @@ class PartidaActivity : ComponentActivity() {
 
         // Si el jugador sigue vivo
         if (actualRoom != maxRoom) {
-            spawnZombie(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP)
+            spawnZombie(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, saveBtn)
             backgroundRandomizer()
             jugador.busquedas = 3
             actualRoom += 1
@@ -391,6 +444,21 @@ class PartidaActivity : ComponentActivity() {
                 putExtra("FAIL", false)
             }
 
+            val db = openOrCreateDatabase("MansionZombieDB", MODE_PRIVATE, null)
+
+            val values = ContentValues().apply {
+                put("activo", false)
+            }
+
+            db.update(
+                "save",       // Nombre de la tabla
+                values,       // Nuevos valores
+                "id = ?",     // Condición (WHERE)
+                arrayOf("1")  // Argumento para el WHERE (en este caso, id = 1)
+            )
+
+            db.close()
+
             stopService(musicIntent)
             startActivity(intent)
             finish()
@@ -408,7 +476,8 @@ class PartidaActivity : ComponentActivity() {
         curarBtn: Button,
         buscarBtn: Button,
         avanzarBtn: Button,
-        enemyHP: TextView
+        enemyHP: TextView,
+        saveBtn: Button
     ){
         enemigo = Zombie()
 
@@ -439,6 +508,8 @@ class PartidaActivity : ComponentActivity() {
         buscarBtn.alpha = 0.5f
         avanzarBtn.isEnabled = false
         avanzarBtn.alpha = 0.5f
+        saveBtn.isEnabled = false
+        saveBtn.alpha = 0.5f
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -501,6 +572,39 @@ class PartidaActivity : ComponentActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    private fun guardarPartida(){
+        val db = openOrCreateDatabase("MansionZombieDB", MODE_PRIVATE, null)
+
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS save (" +
+                "id INTEGER PRIMARY KEY," +
+                "vidaJugador INTEGER," +
+                "armas INTEGER," +
+                "protecciones INTEGER," +
+                "curacion BOOLEAN," +
+                "salaActual INTEGER," +
+                "dificultad INTEGER, " +
+                "activo BOOLEAN)"
+        )
+
+        db.delete("save", null, null)
+
+        val valores = ContentValues().apply {
+            put("vidajugador", jugador.vida)
+            put("armas", jugador.armas)
+            put("protecciones", jugador.protecciones)
+            put("curacion", jugador.curaciones)
+            put("salaActual", actualRoom)
+            put("dificultad", difficulty)
+            put("activo", true)
+        }
+
+        db.insert("save", null, valores)
+        db.close()
+
+        Toast.makeText(this, "Partida guardada", Toast.LENGTH_SHORT).show()
     }
 
 
