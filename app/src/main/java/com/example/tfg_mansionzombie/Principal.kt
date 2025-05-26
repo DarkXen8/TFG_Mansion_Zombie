@@ -31,6 +31,20 @@ class Principal : ComponentActivity() {
 
         // Recuperamos si hay partida guardada o no
         val db = openOrCreateDatabase("MansionZombieDB", MODE_PRIVATE, null)
+
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS save (" +
+                    "id INTEGER PRIMARY KEY," +
+                    "vidaJugador INTEGER," +
+                    "armas INTEGER," +
+                    "protecciones INTEGER," +
+                    "curacion BOOLEAN," +
+                    "busquedas INTEGER," +
+                    "salaActual INTEGER," +
+                    "dificultad INTEGER, " +
+                    "activo BOOLEAN)"
+        )
+
         val cursor = db.rawQuery("SELECT * FROM save LIMIT 1", null)
         var saved = false
 

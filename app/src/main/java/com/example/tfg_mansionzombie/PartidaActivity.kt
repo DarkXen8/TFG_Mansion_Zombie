@@ -49,6 +49,8 @@ class PartidaActivity : ComponentActivity() {
         val musicIntent = Intent(this, GameMusicService::class.java)
         startService(musicIntent)
 
+
+
         difficulty = intent.getIntExtra("DIFFICULTY_LEVEL", 1)
 
         jugador = Jugador()
@@ -65,6 +67,7 @@ class PartidaActivity : ComponentActivity() {
             jugador.armas = cursor.getInt(cursor.getColumnIndexOrThrow("armas"))
             jugador.protecciones = cursor.getInt(cursor.getColumnIndexOrThrow("protecciones"))
             jugador.curaciones = cursor.getInt(cursor.getColumnIndexOrThrow("curacion")) != 0
+            jugador.busquedas = cursor.getInt(cursor.getColumnIndexOrThrow("busquedas"))
             actualRoom = cursor.getInt(cursor.getColumnIndexOrThrow("salaActual"))
             difficulty = cursor.getInt(cursor.getColumnIndexOrThrow("dificultad"))
 
@@ -125,18 +128,52 @@ class PartidaActivity : ComponentActivity() {
         val buscarBtn = findViewById<Button>(R.id.search_btn)
         val avanzarBtn = findViewById<Button>(R.id.next_btn)
 
-        enemySprite.visibility = View.GONE
-        enemyHPBar.visibility = View.GONE
-        enemyHPText.visibility = View.GONE
-        enemyHP.visibility = View.GONE
-        atacarBtn.isEnabled = false
-        atacarBtn.alpha = 0.5f
-        curarBtn.isEnabled = false
-        curarBtn.alpha = 0.5f
-        buscarBtn.isEnabled = false
-        buscarBtn.alpha = 0.5f
-        avanzarBtn.isEnabled = true
-        avanzarBtn.alpha = 1.0f
+        if (carga){
+            enemySprite.visibility = View.GONE
+            enemyHPBar.visibility = View.GONE
+            enemyHPText.visibility = View.GONE
+            enemyHP.visibility = View.GONE
+            atacarBtn.isEnabled = false
+            atacarBtn.alpha = 0.5f
+            if (jugador.curaciones){
+                curarBtn.isEnabled = true
+                curarBtn.alpha = 1f
+            }else{
+                curarBtn.isEnabled = false
+                curarBtn.alpha = 0.5f
+            }
+            if (jugador.busquedas > 0){
+                buscarBtn.isEnabled = true
+                buscarBtn.alpha = 1f
+            }else{
+                buscarBtn.isEnabled = false
+                buscarBtn.alpha = 0.5f
+            }
+            avanzarBtn.isEnabled = true
+            avanzarBtn.alpha = 1.0f
+
+            playerHPBar.progress = jugador.vida
+
+            if (actualRoom == maxRoom){
+                val exitInputStream = assets.open("Backgrounds/exit_button_background.png")
+                val exitDrawable = Drawable.createFromStream(exitInputStream, null)
+                avanzarBtn.background = exitDrawable
+            }
+        }else{
+            enemySprite.visibility = View.GONE
+            enemyHPBar.visibility = View.GONE
+            enemyHPText.visibility = View.GONE
+            enemyHP.visibility = View.GONE
+            atacarBtn.isEnabled = false
+            atacarBtn.alpha = 0.5f
+            curarBtn.isEnabled = false
+            curarBtn.alpha = 0.5f
+            buscarBtn.isEnabled = false
+            buscarBtn.alpha = 0.5f
+            avanzarBtn.isEnabled = true
+            avanzarBtn.alpha = 1.0f
+        }
+
 
 
         // LLAMADAS DE LOS BOTONES AL SER PULSADOS
@@ -577,18 +614,6 @@ class PartidaActivity : ComponentActivity() {
     private fun guardarPartida(){
         val db = openOrCreateDatabase("MansionZombieDB", MODE_PRIVATE, null)
 
-        db.execSQL(
-            "CREATE TABLE IF NOT EXISTS save (" +
-                "id INTEGER PRIMARY KEY," +
-                "vidaJugador INTEGER," +
-                "armas INTEGER," +
-                "protecciones INTEGER," +
-                "curacion BOOLEAN," +
-                "salaActual INTEGER," +
-                "dificultad INTEGER, " +
-                "activo BOOLEAN)"
-        )
-
         db.delete("save", null, null)
 
         val valores = ContentValues().apply {
@@ -596,6 +621,7 @@ class PartidaActivity : ComponentActivity() {
             put("armas", jugador.armas)
             put("protecciones", jugador.protecciones)
             put("curacion", jugador.curaciones)
+            put("busquedas", jugador.busquedas)
             put("salaActual", actualRoom)
             put("dificultad", difficulty)
             put("activo", true)
