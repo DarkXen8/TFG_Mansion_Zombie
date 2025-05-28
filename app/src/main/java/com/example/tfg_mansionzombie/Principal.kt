@@ -1,9 +1,13 @@
 package com.example.tfg_mansionzombie
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.IBinder
 import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.Button
@@ -11,11 +15,29 @@ import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.cardview.widget.CardView
 
+private var musicService: InitialMusicService? = null
+private var isBound = false
+private val serviceConnection = object : ServiceConnection {
+    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+        val binder = service as InitialMusicService.MusicBinder
+        musicService = binder.getService()
+        isBound = true
+    }
+
+    override fun onServiceDisconnected(name: ComponentName?) {
+        musicService = null
+        isBound = false
+    }
+}
+
 class Principal : ComponentActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.principal)  // Este es el layout que creaste para la pantalla principal
+
+        val musicIntent = Intent(this, InitialMusicService::class.java)
+        bindService(musicIntent, serviceConnection, Context.BIND_AUTO_CREATE)
 
         val logo = findViewById<ImageView>(R.id.logo_img)
         val play = findViewById<Button>(R.id.play_btn)
@@ -167,5 +189,23 @@ class Principal : ComponentActivity() {
         stopService(musicIntent)
 
         startActivity(intent)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        musicService?.pauseMusic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        musicService?.resumeMusic()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isBound) {
+            unbindService(serviceConnection)
+            isBound = false
+        }
     }
 }

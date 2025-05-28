@@ -8,17 +8,38 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.animation.ObjectAnimator
+import android.content.ComponentName
+import android.content.Context
+import android.content.ServiceConnection
+import android.os.IBinder
 import androidx.activity.ComponentActivity
 import kotlinx.coroutines.*
+
+//Musica
+private var musicService: InitialMusicService? = null
+private var isBound = false
+private val serviceConnection = object : ServiceConnection {
+    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+        val binder = service as InitialMusicService.MusicBinder
+        musicService = binder.getService()
+        isBound = true
+    }
+
+    override fun onServiceDisconnected(name: ComponentName?) {
+        musicService = null
+        isBound = false
+    }
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.loading)
 
-        // INICIALIZAMOS LA MUSICA DE FONDO
         val musicIntent = Intent(this, InitialMusicService::class.java)
         startService(musicIntent)
+        bindService(musicIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+
 
 
         val imageView = findViewById<ImageView>(R.id.loading_background)
@@ -119,6 +140,24 @@ class MainActivity : ComponentActivity() {
             }
             delay(1300) // Esperamos 1.3 segundos
             index = (index + 1) % loadingMessages.size  // Ciclar a través de los mensajes
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        musicService?.pauseMusic()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        musicService?.resumeMusic()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isBound) {
+            unbindService(serviceConnection)
+            isBound = false
         }
     }
 }

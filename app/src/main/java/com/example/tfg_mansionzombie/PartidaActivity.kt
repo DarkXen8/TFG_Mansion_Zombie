@@ -1,6 +1,7 @@
 package com.example.tfg_mansionzombie
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -17,6 +18,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.content.ContentValues
+import android.content.ServiceConnection
+import android.os.IBinder
 import android.widget.Toast
 
 
@@ -40,6 +43,22 @@ class PartidaActivity : ComponentActivity() {
 
     private var fail: Boolean = false
 
+    //Musica
+    private var musicService: GameMusicService? = null
+    private var isBound = false
+    // Definimos el ServiceConnection CORRECTAMENTE
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as GameMusicService.MusicBinder
+            musicService = binder.getService()
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            musicService = null
+            isBound = false
+        }
+    }
 
     @SuppressLint("SetTextI18n", "CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,8 +66,7 @@ class PartidaActivity : ComponentActivity() {
         setContentView(R.layout.partida)
 
         val musicIntent = Intent(this, GameMusicService::class.java)
-        startService(musicIntent)
-
+        bindService(musicIntent, connection, BIND_AUTO_CREATE)
 
 
         difficulty = intent.getIntExtra("DIFFICULTY_LEVEL", 1)
@@ -639,12 +657,21 @@ class PartidaActivity : ComponentActivity() {
 
         val musicIntent = Intent(this, GameMusicService::class.java)
         stopService(musicIntent)
+        if (isBound) {
+            unbindService(connection)
+            isBound = false
+        }
+
     }
 
     override fun onPause() {
         super.onPause()
+        musicService?.pauseMusic()
+    }
 
-        val musicIntent = Intent(this, GameMusicService::class.java)
-        
+    override fun onResume() {
+        super.onResume()
+        musicService?.resumeMusic()
     }
 }
+
