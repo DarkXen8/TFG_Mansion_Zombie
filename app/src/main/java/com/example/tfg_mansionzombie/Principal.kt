@@ -37,6 +37,7 @@ class Principal : ComponentActivity() {
         setContentView(R.layout.principal)  // Este es el layout que creaste para la pantalla principal
 
         val musicIntent = Intent(this, InitialMusicService::class.java)
+        startService(musicIntent)
         bindService(musicIntent, serviceConnection, Context.BIND_AUTO_CREATE)
 
         val logo = findViewById<ImageView>(R.id.logo_img)

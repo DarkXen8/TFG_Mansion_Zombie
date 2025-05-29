@@ -14,7 +14,7 @@ class GameMusicService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        mediaPlayer = MediaPlayer.create(this, R.raw.intro_background_music).apply {
+        mediaPlayer = MediaPlayer.create(this, R.raw.game_background_music).apply {
             isLooping = true
             setVolume(0.5f, 0.5f)
             start()

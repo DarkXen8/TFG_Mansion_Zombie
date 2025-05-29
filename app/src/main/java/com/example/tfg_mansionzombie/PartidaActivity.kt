@@ -18,10 +18,25 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.content.ContentValues
+import android.content.Context
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.widget.Toast
 
+private var musicService: GameMusicService? = null
+private var isBound = false
+private val serviceConnection = object : ServiceConnection {
+    override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+        val binder = service as GameMusicService.MusicBinder
+        musicService = binder.getService()
+        isBound = true
+    }
+
+    override fun onServiceDisconnected(name: ComponentName?) {
+        musicService = null
+        isBound = false
+    }
+}
 
 class PartidaActivity : ComponentActivity() {
     @SuppressLint("SetTextI18n", "MissingInflatedId")
@@ -43,22 +58,6 @@ class PartidaActivity : ComponentActivity() {
 
     private var fail: Boolean = false
 
-    //Musica
-    private var musicService: GameMusicService? = null
-    private var isBound = false
-    // Definimos el ServiceConnection CORRECTAMENTE
-    private val connection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as GameMusicService.MusicBinder
-            musicService = binder.getService()
-            isBound = true
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            musicService = null
-            isBound = false
-        }
-    }
 
     @SuppressLint("SetTextI18n", "CutPasteId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +65,8 @@ class PartidaActivity : ComponentActivity() {
         setContentView(R.layout.partida)
 
         val musicIntent = Intent(this, GameMusicService::class.java)
-        bindService(musicIntent, connection, BIND_AUTO_CREATE)
+        startService(musicIntent)
+        bindService(musicIntent, serviceConnection, Context.BIND_AUTO_CREATE)
 
 
         difficulty = intent.getIntExtra("DIFFICULTY_LEVEL", 1)
@@ -652,18 +652,6 @@ class PartidaActivity : ComponentActivity() {
     }
 
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-        val musicIntent = Intent(this, GameMusicService::class.java)
-        stopService(musicIntent)
-        if (isBound) {
-            unbindService(connection)
-            isBound = false
-        }
-
-    }
-
     override fun onPause() {
         super.onPause()
         musicService?.pauseMusic()
@@ -672,6 +660,14 @@ class PartidaActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         musicService?.resumeMusic()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isBound) {
+            unbindService(serviceConnection)
+            isBound = false
+        }
     }
 }
 
