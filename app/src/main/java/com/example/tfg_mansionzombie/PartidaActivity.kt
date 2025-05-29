@@ -91,8 +91,6 @@ class PartidaActivity : ComponentActivity() {
 
             cursor.close()
             db.close()
-
-
         }
 
         initialBackground = findViewById(R.id.initialBackground)
@@ -205,7 +203,7 @@ class PartidaActivity : ComponentActivity() {
             buscar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, saveBtn)
         }
         avanzarBtn.setOnClickListener {
-            avanzar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, roomNumberText, musicIntent, saveBtn)
+            avanzar(enemySprite, enemyHPBar, enemyHPText, atacarBtn, curarBtn, buscarBtn, avanzarBtn, enemyHP, roomNumberText, musicIntent, saveBtn, difficulty)
         }
         val saveBTN = findViewById<Button>(R.id.saveBtn)
         saveBTN.setOnClickListener{
@@ -455,6 +453,7 @@ class PartidaActivity : ComponentActivity() {
         roomNumberText: TextView,
         musicIntent: Intent,
         saveBtn: Button,
+        difficulty: Int,
     ) {
         if (fail) {
             // Si el jugador ha perdido
@@ -501,18 +500,31 @@ class PartidaActivity : ComponentActivity() {
 
             val db = openOrCreateDatabase("MansionZombieDB", MODE_PRIVATE, null)
 
+// Leer el progreso actual guardado en la BD
+            val cursor = db.rawQuery("SELECT progresion FROM save LIMIT 1", null)
+            var progresoActual = 1
+            if (cursor.moveToFirst()) {
+                progresoActual = cursor.getInt(cursor.getColumnIndexOrThrow("progresion"))
+            }
+            cursor.close()
+
+// Si ha completado su nivel de progreso actual, aumentar progresion
+            val nuevoProgreso = if (progresoActual == difficulty) progresoActual + 1 else progresoActual
+
             val values = ContentValues().apply {
                 put("activo", false)
+                put("progresion", nuevoProgreso)
             }
 
             db.update(
-                "save",       // Nombre de la tabla
-                values,       // Nuevos valores
-                "id = ?",     // Condición (WHERE)
-                arrayOf("1")  // Argumento para el WHERE (en este caso, id = 1)
+                "save",
+                values,
+                "id = ?",
+                arrayOf("1")
             )
 
             db.close()
+
 
             stopService(musicIntent)
             startActivity(intent)

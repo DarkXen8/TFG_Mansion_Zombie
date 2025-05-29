@@ -2,6 +2,7 @@ package com.example.tfg_mansionzombie
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
@@ -12,8 +13,10 @@ import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.cardview.widget.CardView
+import org.w3c.dom.Text
 
 private var musicService: InitialMusicService? = null
 private var isBound = false
@@ -55,6 +58,8 @@ class Principal : ComponentActivity() {
         // Recuperamos si hay partida guardada o no
         val db = openOrCreateDatabase("MansionZombieDB", MODE_PRIVATE, null)
 
+        //db.execSQL("DROP TABLE IF EXISTS save")
+
         db.execSQL(
             "CREATE TABLE IF NOT EXISTS save (" +
                     "id INTEGER PRIMARY KEY," +
@@ -65,19 +70,40 @@ class Principal : ComponentActivity() {
                     "busquedas INTEGER," +
                     "salaActual INTEGER," +
                     "dificultad INTEGER, " +
-                    "activo BOOLEAN)"
+                    "activo BOOLEAN," +
+                    "progresion INTEGER DEFAULT 1)"
         )
 
+        // Al abrir la base de datos
         val cursor = db.rawQuery("SELECT * FROM save LIMIT 1", null)
+        if (!cursor.moveToFirst()) {
+            // No hay fila, creamos una
+            val valores = ContentValues().apply {
+                put("id", 1)  // Asegura el id = 1
+                put("vidaJugador", 100)  // Valores por defecto
+                put("armas", 0)
+                put("protecciones", 0)
+                put("curacion", false)
+                put("busquedas", 0)
+                put("salaActual", 0)
+                put("dificultad", 1)
+                put("activo", false)
+                put("progresion", 1)
+            }
+            db.insert("save", null, valores)
+        }
+
+
         var saved = false
+        var progresion = 0
 
         if (cursor.moveToFirst()) {
             saved = cursor.getInt(cursor.getColumnIndexOrThrow("activo")) != 0
+            progresion = cursor.getInt(cursor.getColumnIndexOrThrow("progresion"))
         }
 
         cursor.close()
         db.close()
-
 
         if (!saved){
             cargarBtn.alpha = 0.5f
@@ -96,6 +122,26 @@ class Principal : ComponentActivity() {
         val facilbtn = findViewById<Button>(R.id.easyButton)
         val mediobtn = findViewById<Button>(R.id.mediumButton)
         val dificilbtn = findViewById<Button>(R.id.hardButton)
+
+        facilbtn.alpha = 0.5f
+        facilbtn.isEnabled = false
+        mediobtn.alpha = 0.5f
+        mediobtn.isEnabled = false
+        dificilbtn.alpha = 0.5f
+        dificilbtn.isEnabled = false
+
+        if (progresion >= 1){
+            facilbtn.alpha = 1f
+            facilbtn.isEnabled = true
+        }
+        if (progresion >= 2){
+            mediobtn.alpha = 1f
+            mediobtn.isEnabled = true
+        }
+        if (progresion >= 3){
+            dificilbtn.alpha = 1f
+            dificilbtn.isEnabled = true
+        }
 
         facilbtn.setOnClickListener{
             launchGame(1)
