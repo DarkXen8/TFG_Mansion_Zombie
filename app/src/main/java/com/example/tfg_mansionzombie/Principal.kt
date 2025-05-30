@@ -58,6 +58,7 @@ class Principal : ComponentActivity() {
         // Recuperamos si hay partida guardada o no
         val db = openOrCreateDatabase("MansionZombieDB", MODE_PRIVATE, null)
 
+        //Descomentar solo si es necesario borrar la base de datos
         //db.execSQL("DROP TABLE IF EXISTS save")
 
         db.execSQL(
@@ -75,7 +76,7 @@ class Principal : ComponentActivity() {
         )
 
         // Al abrir la base de datos
-        val cursor = db.rawQuery("SELECT * FROM save LIMIT 1", null)
+        var cursor = db.rawQuery("SELECT * FROM save LIMIT 1", null)
         if (!cursor.moveToFirst()) {
             // No hay fila, creamos una
             val valores = ContentValues().apply {
@@ -93,7 +94,7 @@ class Principal : ComponentActivity() {
             db.insert("save", null, valores)
         }
 
-
+        cursor = db.rawQuery("SELECT * FROM save LIMIT 1", null)
         var saved = false
         var progresion = 0
 
